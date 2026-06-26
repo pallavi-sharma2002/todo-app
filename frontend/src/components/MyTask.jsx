@@ -1,4 +1,26 @@
 export default function MyTasks() {
+
+  const getAlltask =  async()=>{
+
+        const response = await fetch("http://localhost:5000/api/task/getAlltask", {
+          method:"GET"
+        });
+        
+        const data = await response.json();
+         if(data.success === false){
+          console.log(data.message)
+          return;
+         }
+      
+    
+      
+      }
+
+
+
+
+
+
   return (
     <div className="bg-black flex justify-center items-center p-6 py-16">
       <div className="w-full max-w-6xl bg-[#0f0f11] border border-white/10 rounded-3xl p-10 shadow-2xl relative overflow-hidden">
