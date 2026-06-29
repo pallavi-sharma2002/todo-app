@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { LoaderCircle } from 'lucide-react';
+ import { toast } from 'react-toastify';
 
 
-export default function AddTask({ addTask, loading }) {
+export default function AddTask({ getAllTask }) {
 
   const [formdata, setFormData] = useState({});
 
@@ -14,8 +15,52 @@ export default function AddTask({ addTask, loading }) {
     })
   }
 
+  const [loading , setLoading] = useState(false)
+  
+  
+      const addTask = async (title, description) => {
+          // e.preventDefault();
+          setLoading(true)
+  
+          
+          const response = await fetch("http://localhost:5000/api/task/addtask", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                  title: title,
+                  description: description
+              })
+          });
+  
+         
+  
+          const data = await response.json();
+  
+          if(data.success === false){
+              setLoading(false)
+              toast.error(data.message)
+              return;
+          }
+  
+          setLoading(false)
+          toast.success(data.message);
 
-  console.log(formdata);
+
+          getAllTask();
+
+          setFormData({
+            title:"",
+            description:""
+          })
+          
+          
+      }
+  
+  
+
+
 
 
   return (
@@ -33,6 +78,7 @@ export default function AddTask({ addTask, loading }) {
         <form className="flex flex-col gap-6 relative z-10">
           <input
             onChange={onHandleChange}
+            value={formdata.title}
             name="title"
             type="text"
             placeholder="What do you need to do?"
@@ -41,6 +87,7 @@ export default function AddTask({ addTask, loading }) {
 
           <input
             onChange={onHandleChange}
+            value={formdata.description}
             name="description"
             type="text"
             placeholder="Add a detailed description..."

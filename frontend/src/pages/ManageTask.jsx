@@ -1,48 +1,48 @@
-import { useState } from "react";
 import AddTask from "../components/AddTask";
 import MyTasks from "../components/MyTask";
- import { toast } from 'react-toastify';
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
 
 export default function ManageTask() {
-    const [loading , setLoading] = useState(false)
 
 
-    const addTask = async (title, description) => {
-        // e.preventDefault();
-        setLoading(true)
+    const [myAllTask, setMyTask] = useState();
 
-        
-        const response = await fetch("http://localhost:5000/api/task/addtask", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                title: title,
-                description: description
-            })
+
+
+    const getAllTask = async () => {
+
+        const response = await fetch("http://localhost:5000/api/task/gettask", {
+            method: "GET"
         });
-
-       
 
         const data = await response.json();
 
-        if(data.success === false){
-            setLoading(false)
+        if (data.success === false) {
             toast.error(data.message)
             return;
         }
 
-        setLoading(false)
-        toast.success(data.message);
-
+        setMyTask(data.data);
 
     }
 
+
+    useEffect(() => {
+        getAllTask();
+    }, [])
+
+    console.log(myAllTask)
+
+
+
+
+
     return (
         <>
-            <AddTask addTask={addTask} loading={loading} />
-            <MyTasks />
+            <AddTask  getAllTask={getAllTask} />
+            <MyTasks myAllTask={myAllTask} getAllTask={getAllTask} />
 
         </>
     )
